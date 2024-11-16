@@ -23,7 +23,6 @@ const App: React.FC = () => {
         <nav>
           <ul className="flex space-x-4 mb-4">
             <li><Link to="/" className="text-yellow-300 hover:text-yellow-100">Accueil</Link></li>
-            <li><Link to="/add-rank-item" className="text-yellow-300 hover:text-yellow-100">Ajouter un site</Link></li>
           </ul>
         </nav>
         <Routes>

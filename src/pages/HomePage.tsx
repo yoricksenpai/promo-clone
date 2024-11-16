@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import BettingSiteCard from '../components/rankItem';
-import { ArrowRight, Trophy, Users, Calendar, LucideIcon } from 'lucide-react';
+import { 
+  Shield, 
+  Info, 
+  AlertCircle, 
+  Gift, 
+  Percent, 
+  Wallet,
+  Star,
+  Clock,
+  Smartphone,
+  LucideIcon 
+} from 'lucide-react';
 
 interface BettingSite {
   _id: string;
@@ -26,7 +37,7 @@ interface BettingSite {
  */
 
 
-const FadeInWhenVisible: React.FC = ({ children }) => (
+const FadeInWhenVisible: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <motion.div
     initial={{ opacity: 0, y: 50 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -63,16 +74,6 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-  /**
-   * Charge les sites de paris depuis l'API.
-   *
-   * Met à jour l'état de la page en fonction du résultat de la requête.
-   * Si la requête réussit, met à jour l'état `bettingSites` avec les données
-   * reçues, triées par rang.
-   * Si la requête échoue, met à jour l'état `error` avec un message d'erreur.
-   * Finalement, met à jour l'état `isLoading` pour indiquer que le chargement
-   * est terminé.
-   */
     const fetchBettingSites = async () => {
       try {
         setIsLoading(true);
@@ -106,9 +107,9 @@ const HomePage: React.FC = () => {
           {!isLoading && !error && bettingSites.length > 0 && (
             <BettingSitesList sites={bettingSites} />
           )}
-          <PronosticsSection />
-          <StatisticsSection />
-          <PromotionSection />
+          <SelectionCriteriaSection  />
+          <BonusAdvantagesSection />
+          <ResponsibleGamblingSection />
         </main>
       </div>
     </div>
@@ -273,135 +274,188 @@ const NoResults = () => (
 );
 
 /**
- * A section that displays free betting predictions.
+ * A section that displays the selection criteria for the top 10 betting sites.
  *
- * This component uses a gradient background and a flex layout to present
- * information attractively. It includes a heading, a description, and a 
- * call-to-action button that invites users to view daily predictions.
- *
- * The section is wrapped in a `FadeInWhenVisible` component to apply a fade-in
- * animation when it comes into view.
+ * This component explains how sites are evaluated and selected for the ranking,
+ * building trust with users by showing the thorough evaluation process.
  */
-const PronosticsSection = () => (
+const SelectionCriteriaSection = () => (
   <FadeInWhenVisible>
     <div className="bg-gradient-to-r from-purple-700/50 to-purple-600/50 rounded-2xl p-10 backdrop-blur-sm">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="flex-1">
-          <h2 className="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">
-            Pronostics Gratuits
-          </h2>
-          <p className="text-xl text-gray-200">
-            Notre équipe d'experts vous offre des pronostics gratuits quotidiens pour vous aider dans vos paris.
-          </p>
-        </div>
-        <CallToActionButton
-          label="Voir les pronostics du jour"
-          icon={ArrowRight}
-          gradient="from-green-500 to-green-600"
+      <h2 className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">
+        Nos Critères de Sélection
+      </h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <CriteriaCard
+          icon={Star}
+          title="Fiabilité Testée"
+          description="Tous les sites sont testés en conditions réelles : dépôts, retraits, service client"
+          highlight="100% Testé"
+        />
+        <CriteriaCard
+          icon={Clock}
+          title="Rapidité des Paiements"
+          description="Nous vérifions les délais de retrait pour garantir des paiements rapides"
+          highlight="24-72h max"
+        />
+        <CriteriaCard
+          icon={Smartphone}
+          title="Interface & Mobile"
+          description="Applications mobiles performantes et interfaces intuitives pour parier facilement"
+          highlight="UX Optimisée"
         />
       </div>
     </div>
   </FadeInWhenVisible>
 );
 
+const CriteriaCard = ({ 
+  icon: Icon, 
+  title, 
+  description,
+  highlight 
+}: { 
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  highlight: string;
+}) => (
+  <div className="bg-gradient-to-br from-purple-800/50 to-purple-900/50 p-6 rounded-xl backdrop-blur-sm border border-purple-700/30 relative overflow-hidden group hover:scale-105 transition-all duration-300">
+    <div className="absolute top-2 right-2 bg-yellow-400/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-semibold">
+      {highlight}
+    </div>
+    <Icon className="w-12 h-12 text-yellow-400 mb-4 group-hover:scale-110 transition-transform" />
+    <h3 className="text-xl font-bold text-white mb-2">
+      {title}
+    </h3>
+    <p className="text-gray-300">
+      {description}
+    </p>
+  </div>
+);
+
 /**
- * A section that displays some statistics about the application.
- *
- * The section includes a heading and a three-column grid of `StatCard` components.
- * Each `StatCard` displays a value and a label. The values are 15, 230k, and 340+,
- * and the labels are "Années d'expérience", "Utilisateurs actifs", and "Pronostics par mois"
- * respectively.
- *
- * The section is wrapped in a `FadeInWhenVisible` component to apply a fade-in
- * animation when it comes into view.
+ * A section that displays a selection of exclusive bonuses available to users.
+ * 
+ * The section is a container with a gradient background, and contains a title, and a grid of 3 cards.
+ * Each card displays an icon, a title, a description, and a highlight (a key metric or benefit).
+ * The icons are: Gift (bonus de bienvenue), Percent (codes promotionnels), and Wallet (bonus sans dépôt).
+ * The highlights are: "Jusqu'à 130%", "100% Vérifiés", and "Offres Spéciales".
+ * The section is wrapped in a FadeInWhenVisible component, which makes it fade in when the user scrolls to it.
  */
-const StatisticsSection = () => (
+const BonusAdvantagesSection = () => (
   <FadeInWhenVisible>
     <div className="bg-gradient-to-r from-purple-700/50 to-purple-600/50 rounded-2xl p-10 backdrop-blur-sm">
-      <h2 className="text-4xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">
-        Ce qu'ils en disent
+      <h2 className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">
+        Avantages Exclusifs
       </h2>
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <StatCard icon={Trophy} value="15" label="Années d'expérience" />
-        <StatCard icon={Users} value="230k" label="Utilisateurs actifs" />
-        <StatCard icon={Calendar} value="340+" label="Pronostics par mois" />
+        <BonusCard
+          icon={Gift}
+          title="Bonus de Bienvenue"
+          description="Profitez de bonus exclusifs jusqu'à 130% sur votre premier dépôt"
+          highlight="Jusqu'à 130%"
+        />
+        <BonusCard
+          icon={Percent}
+          title="Codes Promotionnels"
+          description="Accédez à des codes promo VIP valables sur tous les paris sportifs"
+          highlight="100% Vérifiés"
+        />
+         <BonusCard
+          icon={Wallet}
+          title="Bonus Sans Dépôt"
+          description="Certains sites offrent des bonus sans dépôt pour commencer à parier"
+          highlight="Offres Spéciales"
+        />
       </div>
     </div>
   </FadeInWhenVisible>
 );
 
+const BonusCard = ({ 
+  icon: Icon, 
+  title, 
+  description,
+  highlight 
+}: { 
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  highlight: string;
+}) => (
+  <div className="bg-gradient-to-br from-purple-800/50 to-purple-900/50 p-6 rounded-xl backdrop-blur-sm border border-purple-700/30 relative overflow-hidden">
+    <div className="absolute top-2 right-2 bg-yellow-400/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-semibold">
+      {highlight}
+    </div>
+    <Icon className="w-12 h-12 text-yellow-400 mb-4" />
+    <h3 className="text-xl font-bold text-white mb-2">
+      {title}
+    </h3>
+    <p className="text-gray-300">
+      {description}
+    </p>
+  </div>
+);
+
 /**
- * A section that highlights promotional content.
+ * A section that promotes responsible sports betting.
  *
- * This section includes an eye-catching heading and a brief description
- * encouraging users to explore strategies for maximizing their gains.
- * It features a call-to-action button for further engagement.
+ * This component highlights the importance of betting responsibly
+ * by displaying information cards on legal sites, verified promo codes,
+ * and responsible betting practices.
  *
- * The section is styled with a gradient background and a fade-in animation
- * when it becomes visible in the viewport.
+ * It uses a visually appealing gradient background and is wrapped
+ * in a `FadeInWhenVisible` component for a smooth fade-in effect
+ * when it comes into view.
  */
-const PromotionSection = () => (
+const ResponsibleGamblingSection = () => (
   <FadeInWhenVisible>
-    <div className="bg-gradient-to-r from-purple-700/50 to-purple-600/50 rounded-2xl p-10 text-center backdrop-blur-sm">
-      <h2 className="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">
-        Gagner 7825€ chaque semaine ?
+    <div className="bg-gradient-to-r from-purple-700/50 to-purple-600/50 rounded-2xl p-10 backdrop-blur-sm">
+      <h2 className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">
+        Paris Sportifs Responsables
       </h2>
-      <p className="text-xl text-gray-200 mb-8">
-        Découvrez notre stratégie pour maximiser vos gains.
-      </p>
-      <CallToActionButton
-        label="En savoir plus"
-        icon={ArrowRight}
-        gradient="from-purple-500 to-purple-600"
-      />
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <InfoCard
+          icon={Shield}
+          title="Sites Légaux"
+          description="Tous nos partenaires sont agréés et régulés par les autorités compétentes"
+        />
+        <InfoCard
+          icon={Info}
+          title="Codes Promo Vérifiés"
+          description="Codes promotionnels testés et mis à jour quotidiennement"
+        />
+        <InfoCard
+          icon={AlertCircle}
+          title="Pariez Responsable"
+          description="Fixez-vous des limites et ne pariez que ce que vous pouvez vous permettre de perdre"
+        />
+      </div>
     </div>
   </FadeInWhenVisible>
 );
 
-/**
- * A button component with a gradient background and an icon.
- * 
- * This component displays a button with a specified label, icon, and gradient background.
- * The button has a hover effect that adds a shadow and translates the icon slightly.
- *
- * @param {string} label - The text label displayed on the button.
- * @param {LucideIcon} icon - The icon component to display alongside the label.
- * @param {string} gradient - The gradient classes to apply for the button's background.
- */
-const CallToActionButton = ({
-  label,
-  icon: Icon,
-  gradient,
-}: {
-  label: string;
-  icon: LucideIcon;
-  gradient: string;
+const InfoCard = ({ 
+  icon: Icon, 
+  title, 
+  description 
+}: { 
+  icon: LucideIcon; 
+  title: string; 
+  description: string;
 }) => (
-  <button className={`group flex items-center gap-2 bg-gradient-to-r ${gradient} text-white font-bold py-4 px-8 rounded-xl mx-auto transition-all duration-300 hover:shadow-lg hover:shadow-${gradient.split(' ')[1]}/25`}>
-    {label}
-    <Icon className="group-hover:translate-x-1 transition-transform" />
-  </button>
-);
-
-/**
- * A card component that displays a statistic with an icon, value, and label.
- *
- * This component uses a gradient background and a backdrop blur effect to 
- * visually highlight the statistic. It centers the icon and value, and 
- * provides a label underneath.
- *
- * @param {LucideIcon} icon - The icon component to display at the top of the card.
- * @param {string} value - The numeric or textual value representing the statistic.
- * @param {string} label - A description or label for the statistic.
- */
-const StatCard = ({ icon: Icon, value, label }: { icon: LucideIcon; value: string; label: string }) => (
-  <div className="bg-gradient-to-br from-purple-800/50 to-purple-900/50 p-8 rounded-xl backdrop-blur-sm border border-purple-700/30">
+  <div className="bg-gradient-to-br from-purple-800/50 to-purple-900/50 p-6 rounded-xl backdrop-blur-sm border border-purple-700/30">
     <Icon className="w-12 h-12 text-yellow-400 mb-4 mx-auto" />
-    <p className="font-black text-5xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500 mb-2 text-center">
-      {value}
+    <h3 className="text-xl font-bold text-white mb-2 text-center">
+      {title}
+    </h3>
+    <p className="text-gray-300 text-center">
+      {description}
     </p>
-    <p className="text-xl text-center text-gray-300">{label}</p>
   </div>
 );
-
 export default HomePage;
