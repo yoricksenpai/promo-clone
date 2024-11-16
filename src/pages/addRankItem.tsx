@@ -1,6 +1,6 @@
 import  { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm, Controller, useFieldArray} from 'react-hook-form';
+import { useForm, Controller} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
@@ -48,9 +48,11 @@ const rankItemSchema = z.object({
   rank: z.number().min(1, 'Rank must be at least 1'),
   welcomeBonus: z.string().min(1, 'Welcome bonus is required'),
   promoCode: z.string().min(1, 'Promo code is required'),
-  advantages: z.array(z.string()).min(1, 'At least one advantage is required'),
-  payments: z.array(z.string()).min(1, 'At least one payment method is required'),
+  advantages: z.array(z.string().nonempty()).min(1, 'At least one advantage is required'),
+  payments: z.array(z.string().nonempty()).min(1, 'At least one payment method is required'),
 });
+
+type FormData = z.infer<typeof rankItemSchema>;
 
 /**
  * Page to add a new rank item. Allows the user to input the site name, logo url, rank, welcome bonus, promo code, advantages, and payment methods.
@@ -68,9 +70,11 @@ const AddRankItem = () => {
   const {
     control,
     handleSubmit,
-    reset,
+    watch,
+    setValue,
     formState: { errors },
-  } = useForm<RankItem>({
+    reset,
+  } = useForm<FormData>({
     resolver: zodResolver(rankItemSchema),
     defaultValues: {
       advantages: [''],
@@ -78,24 +82,35 @@ const AddRankItem = () => {
     },
   });
 
-  // Utiliser useFieldArray pour gérer les tableaux de champs
-  const { 
-    fields: advantagesFields, 
-    append: appendAdvantage, 
-    remove: removeAdvantage 
-  } = useFieldArray({
-    control,
-    name: "advantages",
-  });
+  const advantages = watch('advantages');
+  const payments = watch('payments');
 
-  const { 
-    fields: paymentsFields, 
-    append: appendPayment, 
-    remove: removePayment 
-  } = useFieldArray({
-    control,
-    name: "payments",
-  });
+  /**
+   * Removes the field at the given index from the given array field (advantages or payments).
+   * @param fieldName The name of the array field to remove the field from
+   * @param index The index of the field to remove
+   */
+
+
+    /**
+   * Adds a new field to the given array field (advantages or payments).
+   * The new field is added to the end of the array.
+   * @param fieldName The name of the array field to add the new field to
+   */
+    const addField = (fieldName: keyof Pick<FormData, 'advantages' | 'payments'>) => {
+      const currentValue = watch(fieldName);
+      setValue(fieldName, [...currentValue, '']);
+    };
+  const removeField = (
+    fieldName: keyof Pick<FormData, 'advantages' | 'payments'>, 
+    index: number
+  ) => {
+    const currentValue = watch(fieldName);
+    setValue(
+      fieldName,
+      currentValue.filter((_, i) => i !== index)
+    );
+  };
 
   // Fonctions API
   const fetchAllItems = async () => {
@@ -122,27 +137,27 @@ const AddRankItem = () => {
  * 
  * @param {RankItem} data - The data of the rank item to be created.
  */
-  const handleCreate = async (data: RankItem) => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/rankitems', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
+const handleCreate = async (data: RankItem) => {
+  try {
+    setLoading(true);
+    const response = await fetch('/api/rankitems', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
 
-      if (!response.ok) throw new Error('Failed to create item');
-      
-      toast.success('Item created successfully');
-      reset();
-      fetchAllItems();
-    } catch (error) {
-      toast.error('Error creating item');
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (!response.ok) throw new Error('Failed to create item');
+    
+    toast.success('Item created successfully');
+    reset();
+    fetchAllItems();
+  } catch (error) {
+    toast.error('Error creating item');
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   /**
    * Deletes a rank item by sending a DELETE request to the server with the id of the item.
@@ -276,8 +291,8 @@ const AddRankItem = () => {
               Advantages
             </label>
             <div className="space-y-2">
-              {advantagesFields.map((field, index) => (
-                <div key={field.id} className="flex gap-2">
+              {advantages.map((_, index) => (
+                <div key={index} className="flex gap-2">
                   <Controller
                     name={`advantages.${index}`}
                     control={control}
@@ -289,7 +304,7 @@ const AddRankItem = () => {
                     type="button"
                     variant="outline"
                     size="icon"
-                    onClick={() => removeAdvantage(index)}
+                    onClick={() => removeField('advantages', index)}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -301,7 +316,7 @@ const AddRankItem = () => {
               variant="outline"
               size="sm"
               className="mt-2"
-              onClick={() => appendAdvantage('')}
+              onClick={() => addField('advantages')}
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Advantage
@@ -318,8 +333,8 @@ const AddRankItem = () => {
               Payment Methods
             </label>
             <div className="space-y-2">
-              {paymentsFields.map((field, index) => (
-                <div key={field.id} className="flex gap-2">
+              {payments.map((_, index) => (
+                <div key={index} className="flex gap-2">
                   <Controller
                     name={`payments.${index}`}
                     control={control}
@@ -331,7 +346,7 @@ const AddRankItem = () => {
                     type="button"
                     variant="outline"
                     size="icon"
-                    onClick={() => removePayment(index)}
+                    onClick={() => removeField('payments', index)}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -343,7 +358,7 @@ const AddRankItem = () => {
               variant="outline"
               size="sm"
               className="mt-2"
-              onClick={() => appendPayment('')}
+              onClick={() => addField('payments')}
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Payment Method
@@ -364,6 +379,7 @@ const AddRankItem = () => {
       </div>
     </form>
   );
+
 
 /**
  * A component that renders a grid of cards, each containing information about

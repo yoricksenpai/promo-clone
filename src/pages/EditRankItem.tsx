@@ -39,6 +39,7 @@ const rankItemSchema = z.object({
   payments: z.array(z.string()).min(1, 'At least one payment method is required'),
 });
 
+type FormData = z.infer<typeof rankItemSchema>;
 /**
  * Page to edit a rank item.
  *
@@ -64,7 +65,7 @@ const EditRankItem = () => {
     watch,
     setValue,
     reset,
-  } = useForm<RankItem>({
+  } = useForm<FormData>({
     resolver: zodResolver(rankItemSchema),
     defaultValues: {
       advantages: [''],
@@ -80,7 +81,7 @@ const EditRankItem = () => {
    * The new field is added to the end of the array.
    * @param fieldName The name of the array field to add the new field to
    */
-  const addField = (fieldName: 'advantages' | 'payments') => {
+  const addField = (fieldName: keyof Pick<FormData, 'advantages' | 'payments'>) => {
     const currentValue = watch(fieldName);
     setValue(fieldName, [...currentValue, '']);
   };
@@ -90,7 +91,10 @@ const EditRankItem = () => {
    * @param fieldName The name of the array field to remove the field from
    * @param index The index of the field to remove
    */
-  const removeField = (fieldName: 'advantages' | 'payments', index: number) => {
+  const removeField = (
+    fieldName: keyof Pick<FormData, 'advantages' | 'payments'>, 
+    index: number
+  ) => {
     const currentValue = watch(fieldName);
     setValue(
       fieldName,
