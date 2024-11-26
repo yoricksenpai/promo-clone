@@ -23,6 +23,8 @@ interface BettingSite {
   payments: string[];
   promoCode: string;
   rank: number;
+  createAccountUrl?: string;
+  downloadAppUrl?: string;
 }
 
 /**

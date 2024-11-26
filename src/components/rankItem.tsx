@@ -8,8 +8,8 @@ interface BettingSiteCardProps {
   welcomeBonus: string;
   payments: string[];
   promoCode: string;
-  createAccountUrl: string;
-  downloadAppUrl: string;
+  createAccountUrl?: string;
+  downloadAppUrl?: string;
 }
 
 /**
