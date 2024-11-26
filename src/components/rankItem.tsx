@@ -8,6 +8,8 @@ interface BettingSiteCardProps {
   welcomeBonus: string;
   payments: string[];
   promoCode: string;
+  createAccountUrl: string;
+  downloadAppUrl: string;
 }
 
 /**
@@ -35,7 +37,10 @@ const BettingSiteCard: React.FC<BettingSiteCardProps> = ({
   advantages,
   welcomeBonus,
   payments,
-  promoCode
+  promoCode,
+  createAccountUrl,
+  downloadAppUrl
+
 }) => {
   return (
     <div className="group relative bg-gradient-to-br from-purple-900/50 to-purple-800/50 rounded-2xl overflow-hidden backdrop-blur-sm border border-white/10 transition-all duration-500 hover:shadow-xl hover:shadow-purple-500/20">
@@ -85,16 +90,18 @@ const BettingSiteCard: React.FC<BettingSiteCardProps> = ({
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-green-500/25 flex items-center justify-center gap-2 group/btn">
+            <button onClick={() => window.open(createAccountUrl, '_blank')} className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-green-500/25 flex items-center justify-center gap-2 group/btn">
               <UserPlus className="w-5 h-5" />
               Créer un compte
               <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
             </button>
-            
-            <button className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/25 flex items-center justify-center gap-2">
-              <Download className="w-5 h-5" />
-              Télécharger
-            </button>
+            { downloadAppUrl && 
+            <button onClick={() => window.open(downloadAppUrl, '_blank')} className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/25 flex items-center justify-center gap-2">
+            <Download className="w-5 h-5" />
+            Télécharger
+          </button>
+            }
+
           </div>
         </div>
       </div>

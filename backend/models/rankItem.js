@@ -31,6 +31,14 @@ const rankItemSchema = new mongoose.Schema({
     type: Number,
     required: true,
     unique: true
+  },
+  createAccountUrl: {
+    type: String,
+    required: false // Pas nécessaire pour tous les sites
+  },
+  downloadAppUrl: {
+    type: String,
+    required: false // Pas nécessaire pour tous les sites
   }
 }, {
   timestamps: true

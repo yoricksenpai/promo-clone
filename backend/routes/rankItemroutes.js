@@ -24,7 +24,11 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Le nom du site est requis' });
     }
 
-    const newRankItem = new RankItem(req.body);
+    const newRankItem = new RankItem({
+      ...req.body,
+      createAccountUrl: req.body.createAccountUrl || '',
+      downloadAppUrl: req.body.downloadAppUrl || ''
+    });
     const savedItem = await newRankItem.save();
     
     // S'assurer qu'on renvoie bien du JSON
@@ -58,9 +62,14 @@ router.put('/:id', async (req, res, next) => {
   try {
     const updatedRankItem = await RankItem.findByIdAndUpdate(
       req.params.id, 
-      req.body, 
+      {
+        ...req.body,
+        createAccountUrl: req.body.createAccountUrl || undefined,
+        downloadAppUrl: req.body.downloadAppUrl || undefined
+      }, 
       { new: true, runValidators: true }
     );
+
     if (!updatedRankItem) {
       return res.status(404).json({ message: 'Rank item not found' });
     }

@@ -39,6 +39,8 @@ interface RankItem {
   promoCode: string;
   advantages: string[];
   payments: string[];
+  createAccountUrl: string; // Ajouté ici
+  downloadAppUrl: string; // Ajouté ici
 }
 
 // Schema de validation
@@ -50,6 +52,8 @@ const rankItemSchema = z.object({
   promoCode: z.string().min(1, 'Promo code is required'),
   advantages: z.array(z.string().nonempty()).min(1, 'At least one advantage is required'),
   payments: z.array(z.string().nonempty()).min(1, 'At least one payment method is required'),
+  createAccountUrl: z.string().min(1, 'Create account URL is required'),
+  downloadAppUrl: z.string().min(1, 'Download app URL is required'),
 });
 
 type FormData = z.infer<typeof rankItemSchema>;
@@ -283,6 +287,32 @@ const handleCreate = async (data: RankItem) => {
               />
             )}
           />
+
+        <Controller
+          name="createAccountUrl"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Create Account URL"
+              error={errors.createAccountUrl?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="downloadAppUrl"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Download App URL"
+              error={errors.downloadAppUrl?.message}
+            />
+          )}
+        />
+
+
         </div>
 
         <div className="space-y-6">

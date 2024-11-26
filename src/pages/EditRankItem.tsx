@@ -25,6 +25,8 @@ interface RankItem {
   rank: number;
   welcomeBonus: string;
   promoCode: string;
+  createAccountUrl: string;
+  downloadAppUrl: string;
   advantages: string[];
   payments: string[];
 }
@@ -35,6 +37,8 @@ const rankItemSchema = z.object({
   rank: z.number().min(1, 'Rank must be at least 1'),
   welcomeBonus: z.string().min(1, 'Welcome bonus is required'),
   promoCode: z.string().min(1, 'Promo code is required'),
+  createAccountUrl: z.string().min(1, 'Create account URL is required'),
+  downloadAppUrl: z.string().min(1, 'Download app URL is required'),
   advantages: z.array(z.string()).min(1, 'At least one advantage is required'),
   payments: z.array(z.string()).min(1, 'At least one payment method is required'),
 });
@@ -245,6 +249,28 @@ const EditRankItem = () => {
                         {...field}
                         label="Promo Code"
                         error={errors.promoCode?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="createAccountUrl"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        label="Create Account URL"
+                        error={errors.createAccountUrl?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="downloadAppUrl"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        label="Download App URL"
+                        error={errors.downloadAppUrl?.message}
                       />
                     )}
                   />
