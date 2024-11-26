@@ -534,13 +534,27 @@ const handleCreate = async (data: RankItem) => {
 
         <Card className="bg-white/10 backdrop-blur-sm border-white/20">
           <CardContent className="p-6">
-            {viewMode === 'form' ? <FormFields /> : <CardView />}
-          </CardContent>
+            <div>
+              {viewMode === 'form' ? <FormFields /> : <CardView />}
+            </div>
+            <ToastContainer 
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark" // Optional: adds a dark theme to match the app's design
+        className="z-50" // Ensures it appears above other elements
+      />
+                </CardContent>
         </Card>
       </div>
     </div>
   );
-  <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
 };
 
 export default AddRankItem;

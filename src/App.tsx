@@ -4,13 +4,10 @@ import { SpeedInsights } from "@vercel/speed-insights/react"
 import HomePage from './pages/HomePage';
 import AddRankItem from './pages/addRankItem';
 import EditRankItem from './pages/EditRankItem';
-import { ToastContainer } from 'react-toastify';
-
 const App: React.FC = () => {
   return (
     <>
-      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-      <SpeedInsights /> {/* Add this line to use SpeedInsights */}
+          <SpeedInsights /> {/* Add this line to use SpeedInsights */}
       <div className="min-h-screen bg-gradient-to-b from-purple-900 to-indigo-800 text-white p-4 md:p-8">
         <div className="max-w-6xl mx-auto space-y-12">
           <nav>
