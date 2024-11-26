@@ -3,6 +3,7 @@ import { Route, Routes, Link } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AddRankItem from './pages/addRankItem';
 import EditRankItem from './pages/EditRankItem';
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 /**
  * The main app component, which renders the layout for the entire application.
