@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { z } from 'zod';
 import { ArrowLeft, Plus, X } from 'lucide-react';
 import { 
@@ -123,7 +124,9 @@ const EditRankItem = () => {
         // Mettre à jour tous les champs du formulaire
         reset(data);
       } catch (error) {
-        toast.error('Error fetching item');
+        toast.error('Error fetching items', {
+          icon: <X className="h-4 w-4" />,
+        });
         console.error(error);
         navigate('/add'); // Rediriger vers la page d'ajout en cas d'erreur
       } finally {
@@ -155,10 +158,14 @@ const EditRankItem = () => {
 
       if (!response.ok) throw new Error('Failed to update item');
       
-      toast.success('Item updated successfully');
-      navigate('/add-rank-item'); // Rediriger vers la page principale après la mise à jour
+      toast.success('Item updated successfully', {
+        icon: <span role="img" aria-label="success">✅</span>
+      });
+            navigate('/add-rank-item'); // Rediriger vers la page principale après la mise à jour
     } catch (error) {
-      toast.error('Error updating item');
+      toast.error('Error updating item', {
+        icon: <X className="h-4 w-4" />,
+      });
       console.error(error);
     } finally {
       setLoading(false);
@@ -167,6 +174,7 @@ const EditRankItem = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 p-4 md:p-8">
+
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <button
@@ -373,22 +381,31 @@ const EditRankItem = () => {
         </Card>
       </div>
       <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-          <CardContent className="p-6">
-            <ToastContainer 
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark" // Optional: adds a dark theme to match the app's design
-        className="z-50" // Ensures it appears above other elements
-      />
-                </CardContent>
-        </Card>
+  <CardContent className="p-6">
+    <ToastContainer 
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      className="z-50"
+      toastClassName={(type) => 
+        `${
+          type?.type === 'success' 
+            ? 'bg-green-900 border-green-700' 
+            : 'bg-red-900 border-red-700'
+        } relative flex p-3 rounded-lg justify-between overflow-hidden cursor-pointer mb-4`
+      }
+      bodyClassName={() => 
+        "text-white font-semibold flex items-center p-2"
+      }
+    />
+  </CardContent>
+</Card>
     </div>
   );
 };

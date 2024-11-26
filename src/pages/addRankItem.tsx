@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, Controller} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { z } from 'zod';
 import {
   ArrowLeft,
@@ -117,6 +118,7 @@ const AddRankItem = () => {
   };
 
   // Fonctions API
+  // Fetch All Rank Items
   const fetchAllItems = async () => {
     try {
       setLoading(true);
@@ -125,52 +127,43 @@ const AddRankItem = () => {
       const data = await response.json();
       setAllItems(data);
     } catch (error) {
-      toast.error('Error fetching items');
+      toast.error('Error fetching items', {
+        icon: <X className="h-4 w-4" />,
+      });
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
-/**
- * Creates a new rank item by sending a POST request to the server with the provided data.
- * 
- * If the item is created successfully, it shows a success toast, resets the form, 
- * and fetches the updated list of items. If an error occurs during creation, it 
- * displays an error toast and logs the error.
- * 
- * @param {RankItem} data - The data of the rank item to be created.
- */
-const handleCreate = async (data: RankItem) => {
-  try {
-    setLoading(true);
-    const response = await fetch('/api/rankitems', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+  // Create Rank Item
+  const handleCreate = async (data: RankItem) => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/rankitems', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-    if (!response.ok) throw new Error('Failed to create item');
-    
-    toast.success('Item created successfully');
-    reset();
-    fetchAllItems();
-  } catch (error) {
-    toast.error('Error creating item');
-    console.error(error);
-  } finally {
-    setLoading(false);
-  }
-};
+      if (!response.ok) throw new Error('Failed to create item');
+      
+      toast.success('Item created successfully', {
+        icon: <span role="img" aria-label="success">✅</span>
+      });    
+      reset();
+      fetchAllItems();
+    } catch (error) {
+      toast.error('Error creating item', {
+        icon: <X className="h-4 w-4" />,
+      });
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  /**
-   * Deletes a rank item by sending a DELETE request to the server with the id of the item.
-   * 
-   * If the item is deleted successfully, it shows a success toast and fetches the updated list of items.
-   * If an error occurs during deletion, it displays an error toast and logs the error.
-   * 
-   * @param {string} id - The id of the rank item to be deleted.
-   */
+  // Delete Rank Item
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this item?')) return;
 
@@ -182,16 +175,21 @@ const handleCreate = async (data: RankItem) => {
 
       if (!response.ok) throw new Error('Failed to delete item');
       
-      toast.success('Item deleted successfully');
+      toast.success('Item deleted successfully', {
+        icon: <span role="img" aria-label="success">✅</span>
+      });
       fetchAllItems();
     } catch (error) {
-      toast.error('Error deleting item');
+      toast.error('Error deleting item', {
+        icon: <X className="h-4 w-4" />,
+      });
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
+  // Fetch items on component mount
   useEffect(() => {
     fetchAllItems();
   }, []);
@@ -504,6 +502,28 @@ const handleCreate = async (data: RankItem) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 p-4 md:p-8">
+            <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        className="z-50"
+        toastClassName={(type) => 
+          `${
+            type?.type === 'success' 
+              ? 'bg-green-900 border-green-700' 
+              : 'bg-red-900 border-red-700'
+          } relative flex p-3 rounded-lg justify-between overflow-hidden cursor-pointer mb-4`
+        }
+        bodyClassName={() => 
+          "text-white font-semibold flex items-center p-2"
+        }
+      />
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <button
@@ -537,22 +557,10 @@ const handleCreate = async (data: RankItem) => {
             <div>
               {viewMode === 'form' ? <FormFields /> : <CardView />}
             </div>
-            <ToastContainer 
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark" // Optional: adds a dark theme to match the app's design
-        className="z-50" // Ensures it appears above other elements
-      />
                 </CardContent>
         </Card>
       </div>
+
     </div>
   );
 };
