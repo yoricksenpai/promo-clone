@@ -161,7 +161,11 @@ const EditRankItem = () => {
       toast.success('Item updated successfully', {
         icon: <span role="img" aria-label="success">✅</span>
       });
-            navigate('/add-rank-item'); // Rediriger vers la page principale après la mise à jour
+             // Délai avant la redirection pour permettre à l'utilisateur de voir le toast
+    setTimeout(() => {
+      navigate('/add-rank-item');
+    }, 5000); // Délai de 5 secondes
+
     } catch (error) {
       toast.error('Error updating item', {
         icon: <X className="h-4 w-4" />,
@@ -174,11 +178,31 @@ const EditRankItem = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 p-4 md:p-8">
-
+    <ToastContainer 
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      className="z-50"
+      toastClassName={(type) => 
+        `${
+          type?.type === 'success' 
+            ? 'bg-green-900 border-green-700' 
+            : 'bg-red-900 border-red-700'
+        } relative flex p-3 rounded-lg justify-between overflow-hidden cursor-pointer mb-4`
+      }
+      bodyClassName={() => 
+        "text-white font-semibold flex items-center p-2"
+      }
+    />
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <button
-            onClick={() => navigate('/add-rank-item')}
             className="flex items-center gap-2 text-gray-300 hover:text-white group"
           >
             <ArrowLeft className="group-hover:-translate-x-1 transition-transform" />
@@ -380,32 +404,7 @@ const EditRankItem = () => {
           </CardContent>
         </Card>
       </div>
-      <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-  <CardContent className="p-6">
-    <ToastContainer 
-      position="top-right"
-      autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-      className="z-50"
-      toastClassName={(type) => 
-        `${
-          type?.type === 'success' 
-            ? 'bg-green-900 border-green-700' 
-            : 'bg-red-900 border-red-700'
-        } relative flex p-3 rounded-lg justify-between overflow-hidden cursor-pointer mb-4`
-      }
-      bodyClassName={() => 
-        "text-white font-semibold flex items-center p-2"
-      }
-    />
-  </CardContent>
-</Card>
+
     </div>
   );
 };
