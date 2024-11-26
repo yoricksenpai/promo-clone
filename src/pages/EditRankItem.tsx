@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast, ToastContainer } from 'react-toastify';
 import { z } from 'zod';
 import { ArrowLeft, Plus, X } from 'lucide-react';
 import { 
@@ -15,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue 
 } from '../components';
-import { toast } from 'react-hot-toast';
 
 // Réutiliser les types et le schéma de validation de AddRankItem
 interface RankItem {
@@ -374,6 +374,7 @@ const EditRankItem = () => {
       </div>
     </div>
   );
+<ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
 };
 
 export default EditRankItem;
